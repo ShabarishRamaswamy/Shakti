@@ -8,8 +8,9 @@ import (
 const textSize = 24
 
 var (
-	font       rl.Font
-	searchText string
+	font           rl.Font
+	searchText     = "http://127.0.0.1:6011"
+	lastSearchText = searchText
 )
 
 // Initialize loads resources used by the GUI.
@@ -29,13 +30,20 @@ func Close() {
 }
 
 // Render draws the browser chrome currently implemented by the GUI.
-func Render() {
+func Render(url chan string) {
 	searchBox := rl.NewRectangle(16, 16, float32(rl.GetScreenWidth()-32), 44)
 
 	rl.BeginDrawing()
 	rl.ClearBackground(rl.RayWhite)
 
 	raygui.TextBox(searchBox, &searchText, 1024, true)
+
+	if rl.IsKeyPressed(rl.KeyEnter) {
+		select {
+		case url <- searchText:
+		default:
+		}
+	}
 
 	rl.EndDrawing()
 }
